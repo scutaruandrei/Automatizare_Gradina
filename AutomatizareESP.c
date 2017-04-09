@@ -106,13 +106,13 @@ void handleLedOff() {
 
 void pornireFurtun() {
   stateLED = LOW;
-  digitalWrite(ledPin1, stateLED);
+  digitalWrite(ledPin, stateLED);
   response();
 }
 
 void oprireFurtun() {
   stateLED = HIGH;
-  digitalWrite(ledPin1, stateLED);
+  digitalWrite(ledPin, stateLED);
   response();
 }
 
@@ -167,10 +167,15 @@ const String HtmlButtons =
     "<a href=\"LEDOff\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>"
     
     "<a href=\"R1On\"><button style=\"display: block; width: 100%;\">ON</button></a><br/>"
-    "<a href=\"R1Off\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>";
+    "<a href=\"R1Off\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>"
+
+    "<a href=\"R2On\"><button style=\"display: block; width: 100%;\">ON</button></a><br/>"
+    "<a href=\"R2Off\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>";
 
 
 void response(){
+  getDateDs1307();
+  const String HtmlTime = "<h1>" + String(hour, DEC)+":"+String(minute, DEC)+":"+String(second, DEC)+"</h1><br/>\n";
   String htmlRes = HtmlHtml + HtmlTitle + HtmlTime;
   if(stateLED == LOW){
     htmlRes += HtmlLedStateLow;
@@ -207,10 +212,14 @@ void setup() {
     server.on("/LEDOff", handleLedOff);
     server.on("/R1On", pornireFurtun);
     server.on("/R1Off", oprireFurtun);
+    server.on("/R2On", pornireFurtun1);
+    server.on("/R2Off", oprireFurtun1);
     server.begin();
     Serial.println("HTTP server beginned");
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, stateLED);
+    pinMode(ledPin, OUTPUT);
+    digitalWrite(ledPin, stateLED);
     pinMode(ledPin1, OUTPUT);
     digitalWrite(ledPin1, stateLED1);
 }
