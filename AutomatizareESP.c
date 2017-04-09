@@ -37,11 +37,11 @@ ESP8266WebServer server(80);
 // Function to set the currnt time, change the second&minute&hour to the right time
 void setDateDs1307()
 {
-second =10;
-minute = 32;
-hour = 21;
-dayOfWeek = 3;
-dayOfMonth =5;
+second =40;
+minute = 2;
+hour = 16;
+dayOfWeek = 7;
+dayOfMonth =9;
 month =4;
 year= 17;
 Wire.beginTransmission(DS1307_I2C_ADDRESS);
@@ -160,18 +160,30 @@ const String HtmlTitle = "<h1>Pompe Gradina</h1><br/>\n";
 const String HtmlTime = "<h1>" + String(hour, DEC)+":"+String(minute, DEC)+":"+String(second, DEC)+"</h1><br/>\n";
 const String HtmlLedStateLow = "<big>LED is now <b>ON</b></big><br/>\n";
 const String HtmlLedStateHigh = "<big>LED is now <b>OFF</b></big><br/>\n";
+const String HtmlR1StateLow = "<big>Furtun: <b>ON</b></big><br/>\n";
+const String HtmlR1StateHigh = "<big>Furtun: <b>OFF</b></big><br/>\n";
 const String HtmlButtons = 
     "<a href=\"LEDOn\"><button style=\"display: block; width: 100%;\">ON</button></a><br/>"
-    "<a href=\"LEDOff\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>";
+    "<a href=\"LEDOff\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>"
+    
+    "<a href=\"R1On\"><button style=\"display: block; width: 100%;\">ON</button></a><br/>"
+    "<a href=\"R1Off\"><button style=\"display: block; width: 100%;\">OFF</button></a><br/>";
+
 
 void response(){
-  String htmlRes = HtmlHtml + HtmlTitle;
+  String htmlRes = HtmlHtml + HtmlTitle + HtmlTime;
   if(stateLED == LOW){
     htmlRes += HtmlLedStateLow;
   }else{
     htmlRes += HtmlLedStateHigh;
   }
-
+  
+  if(stateLED1 == LOW){
+    htmlRes += HtmlR1StateLow;
+  }else{
+    htmlRes += HtmlR1StateHigh;
+  }
+  
   htmlRes += HtmlButtons;
   htmlRes += HtmlHtmlClose;
 
@@ -183,8 +195,8 @@ void setup() {
   Wire.begin();
     Serial.begin(9600);
     Serial.println();
-    //setDateDs1307(); //Set current time;
-  getDateDs1307();//get the time data from tiny RTC
+   // setDateDs1307(); //Set current time;
+    getDateDs1307();//get the time data from tiny RTC
     WiFi.softAP(ssid, password);
 
     IPAddress apip = WiFi.softAPIP();
@@ -193,10 +205,14 @@ void setup() {
     server.on("/", handleRoot);
     server.on("/LEDOn", handleLedOn);
     server.on("/LEDOff", handleLedOff);
+    server.on("/R1On", pornireFurtun);
+    server.on("/R1Off", oprireFurtun);
     server.begin();
     Serial.println("HTTP server beginned");
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, stateLED);
+    pinMode(ledPin1, OUTPUT);
+    digitalWrite(ledPin1, stateLED1);
 }
 
 void loop() {
